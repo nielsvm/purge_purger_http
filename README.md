@@ -9,4 +9,6 @@ configuration options that older versions of Purge provided.
 
 * To provide a minimum viable product for Drupal 8.0.
 * To port most of the HTTP configuration options legacy purge provides.
+* The ability to create one or more 'success conditions' + AND/OR selection. The
+  API core provides certainly looks promising for this.
 * Robust testing coverage.
