@@ -1,13 +1,13 @@
-HTTP Purger
+# Generic HTTP Purger
 ------------------------------------------------------------------------------
 
-This HTTP Purger submodule provides a manually configurable purger that performs
-outgoing HTTP requests to purge something and resembles the same configurability
-as Purge had in versions ``7.x-1.x`` and ``6.x-1.x``.
+This project provides a generic HTTP-based purger to the [Purge](https://www.drupal.org/project/purge)
+project and allows site builders to support caching platforms and CDNs that
+aren't supported by any other modules. It aims to provide the same technical
+configuration options that older versions of Purge provided.
 
-#### TODO / ROADMAP
+##### Roadmap
 
-* Identify all HTTP options (see UI) from ``7.x-1.x``.
-* Judge per option if they can still apply technically.
-* Judge per option if they can be set with Guzzle, https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Http%21Client.php/class/Client/8
-* Finish the purger into a fully operating implementation.
+* To provide a minimum viable product for Drupal 8.0.
+* To port most of the HTTP configuration options legacy purge provides.
+* Robust testing coverage.
