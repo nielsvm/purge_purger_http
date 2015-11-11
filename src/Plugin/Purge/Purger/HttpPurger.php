@@ -16,18 +16,17 @@ use Drupal\purge\Plugin\Purge\Invalidation\InvalidationInterface;
 use Drupal\purge_purger_http\Entity\HttpPurgerSettings;
 
 /**
- * Generic and highly configurable purger making HTTP requests.
+ * Generic HTTP Purger
  *
- * This purger best suits custom situations where reverse proxies or CDNs are
- * not supported by any other purger, or situations requiring very specific
- * HTTP request based actions to remotely wipe objects.
+ * Generic and highly configurable purger that makes HTTP requests, best suits
+ * custom configurations.
  *
  * @PurgePurger(
  *   id = "http",
- *   label = @Translation("HTTP"),
+ *   label = @Translation("Generic HTTP Purger"),
  *   configform = "\Drupal\purge_purger_http\Form\ConfigurationForm",
  *   cooldown_time = 0.0,
- *   description = @Translation("Generic and highly configurable purger making HTTP requests, best suits custom configurations."),
+ *   description = @Translation("Generic and highly configurable purger that makes HTTP requests, best suits custom configurations."),
  *   multi_instance = TRUE,
  *   types = {},
  * )
