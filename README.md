@@ -1,5 +1,4 @@
 # Generic HTTP Purger
-------------------------------------------------------------------------------
 
 This project provides a generic HTTP-based purger to the [Purge](https://www.drupal.org/project/purge)
 project and allows site builders to support caching platforms and CDNs that
