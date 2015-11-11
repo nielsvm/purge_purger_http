@@ -69,7 +69,7 @@ class ConfigurationCheck extends DiagnosticCheckBase implements DiagnosticCheckI
     // Load configuration objects for all enabled HTTP purgers.
     $plugins = [];
     foreach ($this->purgePurgers->getPluginsEnabled() as $id => $plugin_id) {
-      if ($plugin_id === 'http') {
+      if (in_array($plugin_id, ['http', 'httpbundled'])) {
         $plugins[$id] = HttpPurgerSettings::load($id);
       }
     }
