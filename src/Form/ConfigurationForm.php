@@ -38,6 +38,13 @@ class ConfigurationForm extends PurgerConfigFormBase {
   protected $request_methods = ['BAN', 'GET', 'POST', 'HEAD', 'PUT', 'OPTIONS', 'PURGE', 'DELETE', 'TRACE', 'CONNECT'];
 
   /**
+   * Static listing of the possible connection schemes.
+   *
+   * @var array
+   */
+  protected $schemes = ['http', 'https'];
+
+  /**
    * Constructs a \Drupal\purge_purger_http\Form\ConfigurationForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -79,71 +86,84 @@ class ConfigurationForm extends PurgerConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $settings = HttpPurgerSettings::load($this->getId($form_state));
+    $form['tabs'] = [
+      '#type' => 'vertical_tabs',
+      '#default_tab' => 'edit-connection',
+      '#weight' => 10,
+    ];
 
-    // Name.
+    // Metadata fields.
     $form['name'] = [
       '#title' => $this->t('Name'),
       '#type' => 'textfield',
-      '#description' => $this->t('Unique name to describe this configuration with.'),
+      '#description' => $this->t('A label that describes this purger.'),
       '#default_value' => $settings->name,
       '#required' => TRUE,
     ];
-
-    // Invalidation type.
     $types = [];
     foreach ($this->purgeInvalidationFactory->getPlugins() as $type => $definition) {
       $types[$type] = (string)$definition['label'];
     }
     $form['invalidationtype'] = [
       '#type' => 'select',
-      '#title' => $this->t('Type of invalidation'),
-      '#description' => $this->t('Configure which type of cache invalidation this purger will clear.'),
+      '#title' => $this->t('Type'),
+      '#description' => $this->t('What sort of item will this purger clear?'),
       '#default_value' => $settings->invalidationtype,
       '#options' => $types,
       '#required' => FALSE,
     ];
 
-    // HTTP Settings.
-    $form['http_settings'] = [
-      '#title' => $this->t('HTTP Settings'),
-      '#description' => $this->t('Configure how custom outbound HTTP requests should be formed.'),
+    // The request.
+    $form['request'] = [
       '#type' => 'details',
-      '#open' => TRUE,
+      '#group' => 'tabs',
+      '#title' => $this->t('HTTP Request'),
+      '#description' => $this->t('In this section you configure how a single HTTP request looks like.')
     ];
-    $form['http_settings']['hostname'] = [
+    $form['request']['hostname'] = [
       '#title' => $this->t('Hostname'),
       '#type' => 'textfield',
       '#default_value' => $settings->hostname,
-      '#required' => FALSE,
     ];
-    $form['http_settings']['port'] = [
+    $form['request']['port'] = [
       '#title' => $this->t('Port'),
       '#type' => 'textfield',
       '#default_value' => $settings->port,
-      '#required' => FALSE,
     ];
-
-    // @todo We should get token support in the future.
-    $form['http_settings']['path'] = [
+    $form['request']['path'] = [
       '#title' => $this->t('Path'),
       '#type' => 'textfield',
       '#default_value' => $settings->path,
-      '#required' => FALSE,
     ];
-    $form['http_settings']['request_method'] = [
+    $form['request']['request_method'] = [
       '#title' => $this->t('Request Method'),
       '#type' => 'select',
       '#default_value' => array_search($settings->request_method, $this->request_methods),
       '#options' => $this->request_methods,
-      '#required' => FALSE,
+    ];
+    $form['request']['scheme'] = [
+      '#title' => $this->t('Scheme'),
+      '#type' => 'select',
+      '#default_value' => array_search($settings->scheme, $this->schemes),
+      '#options' => $this->schemes,
+    ];
+    $form['request']['verify'] = [
+      '#title' => $this->t('Verify SSL certificate'),
+      '#type' => 'checkbox',
+      '#description' => $this->t("Uncheck to disable certificate verification (this is insecure!)."),
+      '#default_value' => $settings->verify,
+      '#states' => [
+        'visible' => [
+          ':input[name="scheme"]' => ['value' => array_search('https', $this->schemes)]
+        ]
+      ]
     ];
 
     // Performance.
     $form['performance'] = [
-      '#title' => $this->t('Performance'),
-      '#description' => $this->t('Tune HTTP-based processing and ensure a good trade off between capacity and system stability.'),
       '#type' => 'details',
-      '#open' => TRUE,
+      '#group' => 'tabs',
+      '#title' => $this->t('Performance'),
     ];
     $form['performance']['timeout'] = [
       '#type' => 'number',
@@ -153,7 +173,7 @@ class ConfigurationForm extends PurgerConfigFormBase {
       '#title' => $this->t('Timeout'),
       '#default_value' => $settings->timeout,
       '#required' => TRUE,
-      '#description' => $this->t('Float describing the timeout of the request in seconds.')
+      '#description' => $this->t('The timeout of the request in seconds.')
     ];
     $form['performance']['connect_timeout'] = [
       '#type' => 'number',
@@ -163,7 +183,7 @@ class ConfigurationForm extends PurgerConfigFormBase {
       '#title' => $this->t('Connection timeout'),
       '#default_value' => $settings->connect_timeout,
       '#required' => TRUE,
-      '#description' => $this->t('Float describing the number of seconds to wait while trying to connect to a server.')
+      '#description' => $this->t('The number of seconds to wait while trying to connect to a server.')
     ];
     $form['performance']['cooldown_time'] = [
       '#type' => 'number',
@@ -173,7 +193,7 @@ class ConfigurationForm extends PurgerConfigFormBase {
       '#title' => $this->t('Cooldown time'),
       '#default_value' => $settings->cooldown_time,
       '#required' => TRUE,
-      '#description' => $this->t('Number of seconds to wait after one or more invalidations took place. When you have only one purger, this value can be 0.0.')
+      '#description' => $this->t('Number of seconds to wait after a group of HTTP requests (so that other purgers get fresh content)')
     ];
     $form['performance']['max_requests'] = [
       '#type' => 'number',
@@ -183,30 +203,7 @@ class ConfigurationForm extends PurgerConfigFormBase {
       '#title' => $this->t('Maximum requests'),
       '#default_value' => $settings->max_requests,
       '#required' => TRUE,
-      '#description' => $this->t('Maximum number of HTTP requests that can be made during the runtime of one request (including CLI). The higher this number is set, the more - CLI based - scripts can process but this can also badly influence your end-user performance when using runtime-based queue processors.')
-    ];
-
-    // @todo Implement repeatable rows with two text fields for HEADER -> VALUE
-    $form['headers'] = [
-      '#title' => $this->t('Headers'),
-      '#type' => 'details',
-      '#open' => TRUE,
-    ];
-
-    // @todo Implement SSL configuration options.
-    $form['ssl'] = [
-      '#title' => $this->t('SSL'),
-      '#type' => 'details',
-      '#open' => TRUE,
-    ];
-
-    // @todo Implement repeatable row options to configure *when* invalidations
-    // are considered successful or not, for instance a option that says "when
-    // HTTP response code: 200, 404".
-    $form['success_conditions'] = [
-      '#title' => $this->t('Success conditions'),
-      '#type' => 'details',
-      '#open' => TRUE,
+      '#description' => $this->t("Maximum number of HTTP requests that can be made during Drupal's execution lifetime. Usually PHP resource restraints lower this value dynamically, but can be met at the CLI.")
     ];
 
     return parent::buildForm($form, $form_state);
@@ -234,16 +231,19 @@ class ConfigurationForm extends PurgerConfigFormBase {
    */
   public function submitFormSuccess(array &$form, FormStateInterface $form_state) {
     $settings = HttpPurgerSettings::load($this->getId($form_state));
-    $settings->name = $form_state->getValue('name');
-    $settings->invalidationtype = $form_state->getValue('invalidationtype');
-    $settings->hostname = $form_state->getValue('hostname');
-    $settings->port = $form_state->getValue('port');
-    $settings->path = $form_state->getValue('path');
-    $settings->request_method = $this->request_methods[$form_state->getValue('request_method')];
-    $settings->timeout = $form_state->getValue('timeout');
-    $settings->connect_timeout = $form_state->getValue('connect_timeout');
-    $settings->cooldown_time = $form_state->getValue('cooldown_time');
-    $settings->max_requests = $form_state->getValue('max_requests');
+    foreach ($settings as $key => $default_value) {
+      if (!is_null($value = $form_state->getValue($key))) {
+        if ($key === 'request_method') {
+          $settings->$key = $this->request_methods[$value];
+        }
+        elseif ($key === 'scheme') {
+          $settings->$key = $this->schemes[$value];
+        }
+        else {
+          $settings->$key = $value;
+        }
+      }
+    }
     $settings->save();
   }
 

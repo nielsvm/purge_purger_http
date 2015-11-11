@@ -44,28 +44,23 @@ class ConfigurationFormTest extends PurgerConfigFormTestBase {
   public function testFieldExistence() {
     $this->drupalLogin($this->admin_user);
     $this->drupalGet($this->route);
-    $this->assertField('edit-name');
-    $this->assertField('edit-invalidationtype');
-    // Verify every HTTP settings field exists.
-    $this->assertField('edit-hostname');
-    $this->assertField('edit-port');
-    $this->assertField('edit-path');
-    $this->assertField('edit-request-method');
-    // Validate HTTP settings form values.
-    $this->assertFieldById('edit-hostname', 'localhost');
-    $this->assertFieldById('edit-port', 80);
-    $this->assertFieldById('edit-path', '');
-    $this->assertOptionSelected('edit-request-method', 0);
-    // Verify every performance field exists.
-    $this->assertField('edit-timeout');
-    $this->assertField('edit-connect-timeout');
-    $this->assertField('edit-cooldown-time');
-    $this->assertField('edit-max-requests');
-    // Validate performance form values.
-    $this->assertFieldById('edit-timeout', 0.5);
-    $this->assertFieldById('edit-connect-timeout', 0.2);
-    $this->assertFieldById('edit-cooldown-time', 0.0);
-    $this->assertFieldById('edit-max-requests', 100);
+    $fields = [
+      'edit-name' => '',
+      'edit-invalidationtype' => 'tag',
+      'edit-hostname' => 'localhost',
+      'edit-port' => 80,
+      'edit-path' => '/',
+      'edit-request-method' => 0,
+      'edit-scheme' => 0,
+      'edit-verify' => TRUE,
+      'edit-timeout' => 0.5,
+      'edit-connect-timeout' => 0.2,
+      'edit-cooldown-time' => 0.0,
+      'edit-max-requests' => 100,
+    ];
+    foreach ($fields as $field => $default_value) {
+      $this->assertFieldById($field, $default_value);
+    }
   }
 
   /**
@@ -135,6 +130,8 @@ class ConfigurationFormTest extends PurgerConfigFormTestBase {
       'port' => 8080,
       'path' => 'node/1',
       'request_method' => 1,
+      'scheme' => 0,
+      'verify' => TRUE,
       'timeout' => 6,
       'connect_timeout' => 0.5,
       'cooldown_time' => 0.8,
@@ -142,18 +139,9 @@ class ConfigurationFormTest extends PurgerConfigFormTestBase {
     ];
     $this->drupalPostForm($this->route, $edit, t('Save configuration'));
     $this->drupalGet($this->route);
-    // Load settings form page and test for new values.
-    $this->assertFieldById('edit-name', $edit['name']);
-    $this->assertFieldById('edit-invalidationtype', $edit['invalidationtype']);
-    // HTTP settings
-    $this->assertFieldById('edit-hostname', $edit['hostname']);
-    $this->assertFieldById('edit-port', $edit['port']);
-    $this->assertFieldById('edit-path', $edit['path']);
-    $this->assertFieldById('edit-request-method', $edit['request_method']);
-    // Performance
-    $this->assertFieldById('edit-timeout', $edit['timeout']);
-    $this->assertFieldById('edit-connect-timeout', $edit['connect_timeout']);
-    $this->assertFieldById('edit-max-requests', $edit['max_requests']);
+    foreach ($edit as $field => $value) {
+      $this->assertFieldById('edit-' . str_replace('_', '-', $field), $value);
+    }
   }
 
 }

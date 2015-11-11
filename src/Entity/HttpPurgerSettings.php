@@ -23,74 +23,89 @@ use Drupal\purge\Plugin\Purge\Purger\PurgerSettingsInterface;
 class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInterface {
 
   /**
-   * The user interface readable name of this instance.
+   * The readable name of this purger.
    *
    * @var string
    */
   public $name = '';
 
   /**
-   * The invalidation plugin ID that this instance is configured to invalidate.
+   * The invalidation plugin ID that this purger invalidates.
    *
    * @var string
    */
   public $invalidationtype = 'tag';
 
   /**
-   * The hostname to connect to for the custom outbound HTTP request.
+   * The host or IP-address to connect to.
    *
    * @var string
    */
   public $hostname = 'localhost';
 
   /**
-   * The port to connect to for the custom outbound HTTP request.
+   * The port to connect to.
    *
    * @var int
    */
   public $port = 80;
 
   /**
-   * The path to trigger a cache invalidation for.
+   * The HTTP path.
    *
    * @var string
    */
-  public $path = '';
+  public $path = '/';
 
   /**
-   * The HTTP request method to use for the HTTP Purger.
+   * The HTTP request method.
    *
    * @var string
    */
   public $request_method = 'BAN';
 
   /**
-   * Float describing the timeout of the request in seconds.
+   * The HTTP scheme.
+   *
+   * @var string
+   */
+  public $scheme = 'http';
+
+  /**
+   * Whether to verify SSL certificates or not.
+   *
+   * @see http://docs.guzzlephp.org/en/latest/request-options.html#verify
+   *
+   * @var string
+   */
+  public $verify = TRUE;
+
+  /**
+   * The timeout of the request in seconds.
    *
    * @var float
    */
   public $timeout = 0.5;
 
   /**
-   * Float describing the number of seconds to wait while trying to connect to
-   * a server.
+   * The number of seconds to wait while trying to connect to a server.
    *
    * @var float
    */
   public $connect_timeout = 0.2;
 
   /**
-   * Float between 0.0-3.0 that describes the time to wait after invalidation.
+   * Number of seconds to wait after one or more invalidations took place (so
+   * that other purgers get fresh content).'
    *
    * @var float
    */
   public $cooldown_time = 0.0;
 
   /**
-   * Maximum number of HTTP requests that can be made during the runtime of
-   * one request (including CLI). The higher this number is set, the more - CLI
-   * based - scripts can process but this can also badly influence your end-user
-   * performance when using runtime-based queue processors.
+   * Maximum number of HTTP requests that can be made during Drupal's execution
+   * lifetime. Usually PHP resource restraints lower this value dynamically, but
+   * can be met at the CLI.
    *
    * @var int
    */
