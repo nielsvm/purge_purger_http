@@ -41,3 +41,8 @@ purge_purger_http.settings.*:
     max_requests:
       type: integer
       translatable: false
+    headers:
+      type: sequence
+      translatable: false
+      sequence:
+        type: purge_purger_http_header

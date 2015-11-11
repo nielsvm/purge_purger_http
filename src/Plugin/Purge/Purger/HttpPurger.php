@@ -107,6 +107,20 @@ class HttpPurger extends PurgerBase implements PurgerInterface {
   }
 
   /**
+   * Retrieve all configured headers that need to be set.
+   *
+   * @return string[]
+   *   Associative array with header values and field names in the key.
+   */
+  protected function getHeaders() {
+    $headers = [];
+    foreach ($this->settings->headers as $header) {
+      $headers[$header['field']] = $header['value'];
+    }
+    return $headers;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getLabel() {

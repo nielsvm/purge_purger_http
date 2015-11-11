@@ -53,6 +53,8 @@ class ConfigurationFormTest extends PurgerConfigFormTestBase {
       'edit-request-method' => 0,
       'edit-scheme' => 0,
       'edit-verify' => TRUE,
+      'edit-headers-0-field' => '',
+      'edit-headers-0-value' => '',
       'edit-timeout' => 0.5,
       'edit-connect-timeout' => 0.2,
       'edit-cooldown-time' => 0.0,
@@ -122,6 +124,7 @@ class ConfigurationFormTest extends PurgerConfigFormTestBase {
    * Test posting data to the HTTP Purger settings form.
    */
   public function testFormSubmit() {
+    // Assert that all (simple) fields submit as intended.
     $this->drupalLogin($this->admin_user);
     $edit = [
       'name' => 'foobar',
@@ -142,6 +145,16 @@ class ConfigurationFormTest extends PurgerConfigFormTestBase {
     foreach ($edit as $field => $value) {
       $this->assertFieldById('edit-' . str_replace('_', '-', $field), $value);
     }
+    // Assert headers behavior.
+    $form = $this->getFormInstance();
+    $form_state = new FormState();
+    $form_state->addBuildInfo('args', [$this->formArgs]);
+    $form_state->setValue('headers', [['field' => 'foo', 'value' => 'bar']]);
+    $this->formBuilder->submitForm($form, $form_state);
+    $this->assertEqual(0, count($form_state->getErrors()));
+    $this->drupalGet($this->route);
+    $this->assertFieldById('edit-headers-0-field', 'foo');
+    $this->assertFieldById('edit-headers-0-value', 'bar');
   }
 
 }

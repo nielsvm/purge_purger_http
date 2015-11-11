@@ -81,6 +81,13 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
   public $verify = TRUE;
 
   /**
+   * Configured outgoing HTTP headers.
+   *
+   * @var array[]
+   */
+  public $headers = [];
+
+  /**
    * The timeout of the request in seconds.
    *
    * @var float

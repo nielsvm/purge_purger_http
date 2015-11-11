@@ -117,7 +117,7 @@ class ConfigurationForm extends PurgerConfigFormBase {
     $form['request'] = [
       '#type' => 'details',
       '#group' => 'tabs',
-      '#title' => $this->t('HTTP Request'),
+      '#title' => $this->t('Request'),
       '#description' => $this->t('In this section you configure how a single HTTP request looks like.')
     ];
     $form['request']['hostname'] = [
@@ -157,6 +157,52 @@ class ConfigurationForm extends PurgerConfigFormBase {
           ':input[name="scheme"]' => ['value' => array_search('https', $this->schemes)]
         ]
       ]
+    ];
+
+    // Headers.
+    if (is_null($form_state->get('headers_items_count'))) {
+      $value = empty($settings->headers) ? 1 : count($settings->headers);
+      $form_state->set('headers_items_count', $value);
+    }
+    $form['headers'] = [
+      '#type' => 'details',
+      '#group' => 'tabs',
+      '#title' => $this->t('Headers'),
+      '#description' => $this->t('Configure the outbound HTTP headers, leave empty to delete.')
+    ];
+    $form['headers']['headers'] = [
+      '#tree' => TRUE,
+      '#type' => 'table',
+      '#header' => [$this->t('Header'), $this->t('Value')],
+      '#prefix' => '<div id="headers-wrapper">',
+      '#suffix' => '</div>'
+    ];
+    for ($i = 0; $i < $form_state->get('headers_items_count'); $i++) {
+      if (!isset($form['headers']['headers'][$i])) {
+        $header = isset($settings->headers[$i]) ? $settings->headers[$i] :
+          ['field' => '', 'value' => ''];
+        $form['headers']['headers'][$i]['field'] = [
+          '#type' => 'textfield',
+          '#default_value' => $header['field'],
+          '#attributes' => ['style' => 'width: 100%;'],
+        ];
+        $form['headers']['headers'][$i]['value'] = [
+          '#type' => 'textfield',
+          '#default_value' => $header['value'],
+          '#attributes' => ['style' => 'width: 100%;'],
+        ];
+      }
+    }
+    $form['headers']['add'] = [
+      '#type' => 'submit',
+      '#name' => 'add',
+      '#value' => t('Add header'),
+      '#submit' => [[$this, 'addHeaderSubmit']],
+      '#ajax' => [
+        'callback' => [$this, 'addHeaderCallback'],
+        'wrapper' => 'headers-wrapper',
+        'effect' => 'fade',
+      ],
     ];
 
     // Performance.
@@ -210,6 +256,33 @@ class ConfigurationForm extends PurgerConfigFormBase {
   }
 
   /**
+   * Adds more textfields to the header table.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function addHeaderCallback(array &$form, FormStateInterface $form_state) {
+    return $form['headers']['headers'];
+  }
+
+  /**
+   * Let the form rebuild the header table.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function addHeaderSubmit(array &$form, FormStateInterface $form_state) {
+    $count = $form_state->get('headers_items_count');
+    $count++;
+    $form_state->set('headers_items_count', $count);
+    $form_state->setRebuild();
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
@@ -238,6 +311,14 @@ class ConfigurationForm extends PurgerConfigFormBase {
         }
         elseif ($key === 'scheme') {
           $settings->$key = $this->schemes[$value];
+        }
+        elseif ($key === 'headers') {
+          $settings->headers = [];
+          foreach ($value as $header) {
+            if (strlen($header['field'] && strlen($header['value']))) {
+              $settings->headers[] = $header;
+            }
+          }
         }
         else {
           $settings->$key = $value;
