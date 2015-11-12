@@ -14,4 +14,11 @@ use Drupal\purge_purger_http\Form\HttpPurgerFormBase;
  */
 class HttpPurgerForm extends HttpPurgerFormBase {
 
+  /**
+   * The token group names this purger supports replacing tokens for.
+   *
+   * @var string[]
+   */
+  protected $tokenGroups = ['invalidation'];
+
 }

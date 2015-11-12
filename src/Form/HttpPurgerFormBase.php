@@ -86,16 +86,12 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $settings = HttpPurgerSettings::load($this->getId($form_state));
-    $form['tabs'] = [
-      '#type' => 'vertical_tabs',
-      '#default_tab' => 'edit-connection',
-      '#weight' => 10,
-    ];
-
+    $form['tabs'] = ['#type' => 'vertical_tabs', '#weight' => 10,];
     $this->buildFormMetadata($form, $form_state, $settings);
     $this->buildFormRequest($form, $form_state, $settings);
     $this->buildFormHeaders($form, $form_state, $settings);
     $this->buildFormPerformance($form, $form_state, $settings);
+    $this->buildFormTokensHelp($form, $form_state, $settings);
     return parent::buildForm($form, $form_state);
   }
 
@@ -328,6 +324,61 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#required' => TRUE,
       '#description' => $this->t("Maximum number of HTTP requests that can be made during Drupal's execution lifetime. Usually PHP resource restraints lower this value dynamically, but can be met at the CLI.")
     ];
+  }
+
+  /**
+   * Build the 'tokens' section of the form.
+   *
+   * @todo
+   *   This implementation depends on purge_tokens_token_info(), provided by the
+   *   purge_token submodule. I'm aware this isn't the cleanest pattern but the
+   *   most sensible way I can think of to get the supported token patterns.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param \Drupal\purge_purger_http\Entity\HttpPurgerSettings $settings
+   *   Configuration entity for the purger being configured.
+   */
+  public function buildFormTokensHelp(array &$form, FormStateInterface $form_state, HttpPurgerSettings $settings) {
+    if (function_exists('purge_tokens_token_info')) {
+      $tokens = purge_tokens_token_info()['tokens'];
+      $form['tokens'] = [
+        '#type' => 'details',
+        '#group' => 'tabs',
+        '#title' => $this->t('Tokens'),
+        '#description' => $this->t('<p>Tokens are replaced for the <em>Path</em>-field and each header <em>Value</em>.</p>'),
+      ];
+      $form['tokens']['table'] = [
+        '#type' => 'table',
+        '#responsive' => TRUE,
+        '#header' => [
+          'token' => [
+            'data' => $this->t('Token'),
+            'class' => [RESPONSIVE_PRIORITY_MEDIUM]
+          ],
+          'description' => [
+            'data' => $this->t('Description'),
+            'class' => [RESPONSIVE_PRIORITY_LOW]
+          ],
+        ],
+      ];
+      foreach ($this->tokenGroups as $token_group) {
+        foreach (purge_tokens_token_info()['tokens'][$token_group] as $token => $info) {
+          $token = sprintf('[%s:%s]', $token_group, $token);
+          $form['tokens']['table'][$token]['token'] = [
+            '#markup' => $this->t(
+              '<b>@name</b><br /><code>@token</code>',
+              ['@token' => $token, '@name' => $info['name']]
+            ),
+          ];
+          $form['tokens']['table'][$token]['description'] = [
+            '#markup' => $info['description']
+          ];
+        }
+      }
+    }
   }
 
   /**
