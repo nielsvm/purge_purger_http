@@ -92,7 +92,24 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#weight' => 10,
     ];
 
-    // Metadata fields.
+    $this->buildFormMetadata($form, $form_state, $settings);
+    $this->buildFormRequest($form, $form_state, $settings);
+    $this->buildFormHeaders($form, $form_state, $settings);
+    $this->buildFormPerformance($form, $form_state, $settings);
+    return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * Build the 'metadata' section of the form.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param \Drupal\purge_purger_http\Entity\HttpPurgerSettings $settings
+   *   Configuration entity for the purger being configured.
+   */
+  public function buildFormMetadata(array &$form, FormStateInterface $form_state, HttpPurgerSettings $settings) {
     $form['name'] = [
       '#title' => $this->t('Name'),
       '#type' => 'textfield',
@@ -112,8 +129,19 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#options' => $types,
       '#required' => FALSE,
     ];
+  }
 
-    // The request.
+  /**
+   * Build the 'request' section of the form.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param \Drupal\purge_purger_http\Entity\HttpPurgerSettings $settings
+   *   Configuration entity for the purger being configured.
+   */
+  public function buildFormRequest(array &$form, FormStateInterface $form_state, HttpPurgerSettings $settings) {
     $form['request'] = [
       '#type' => 'details',
       '#group' => 'tabs',
@@ -158,8 +186,19 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
         ]
       ]
     ];
+  }
 
-    // Headers.
+  /**
+   * Build the 'headers' section of the form.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param \Drupal\purge_purger_http\Entity\HttpPurgerSettings $settings
+   *   Configuration entity for the purger being configured.
+   */
+  public function buildFormHeaders(array &$form, FormStateInterface $form_state, HttpPurgerSettings $settings) {
     if (is_null($form_state->get('headers_items_count'))) {
       $value = empty($settings->headers) ? 1 : count($settings->headers);
       $form_state->set('headers_items_count', $value);
@@ -197,15 +236,53 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#type' => 'submit',
       '#name' => 'add',
       '#value' => t('Add header'),
-      '#submit' => [[$this, 'addHeaderSubmit']],
+      '#submit' => [[$this, 'buildFormHeadersAdd']],
       '#ajax' => [
-        'callback' => [$this, 'addHeaderCallback'],
+        'callback' => [$this, 'buildFormHeadersRebuild'],
         'wrapper' => 'headers-wrapper',
         'effect' => 'fade',
       ],
     ];
+  }
 
-    // Performance.
+  /**
+   * Build the 'headers' section of the form: retrieves updated elements.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function buildFormHeadersRebuild(array &$form, FormStateInterface $form_state) {
+    return $form['headers']['headers'];
+  }
+
+  /**
+   * Build the 'headers' section of the form: increments the item count.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function buildFormHeadersAdd(array &$form, FormStateInterface $form_state) {
+    $count = $form_state->get('headers_items_count');
+    $count++;
+    $form_state->set('headers_items_count', $count);
+    $form_state->setRebuild();
+  }
+
+  /**
+   * Build the 'performance' section of the form.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param \Drupal\purge_purger_http\Entity\HttpPurgerSettings $settings
+   *   Configuration entity for the purger being configured.
+   */
+  public function buildFormPerformance(array &$form, FormStateInterface $form_state, HttpPurgerSettings $settings) {
     $form['performance'] = [
       '#type' => 'details',
       '#group' => 'tabs',
@@ -251,35 +328,6 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#required' => TRUE,
       '#description' => $this->t("Maximum number of HTTP requests that can be made during Drupal's execution lifetime. Usually PHP resource restraints lower this value dynamically, but can be met at the CLI.")
     ];
-
-    return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * Adds more textfields to the header table.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   */
-  public function addHeaderCallback(array &$form, FormStateInterface $form_state) {
-    return $form['headers']['headers'];
-  }
-
-  /**
-   * Let the form rebuild the header table.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   */
-  public function addHeaderSubmit(array &$form, FormStateInterface $form_state) {
-    $count = $form_state->get('headers_items_count');
-    $count++;
-    $form_state->set('headers_items_count', $count);
-    $form_state->setRebuild();
   }
 
   /**
