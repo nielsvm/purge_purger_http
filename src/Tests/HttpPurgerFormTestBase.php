@@ -22,13 +22,6 @@ abstract class HttpPurgerFormTestBase extends PurgerConfigFormTestBase {
   public static $modules = ['purge_purger_http'];
 
   /**
-   * The plugin ID for which the form tested is rendered for.
-   *
-   * @var string
-   */
-  protected $plugin = 'http';
-
-  /**
    * Verify that the form contains all fields we require.
    */
   public function testFieldExistence() {
@@ -52,6 +45,18 @@ abstract class HttpPurgerFormTestBase extends PurgerConfigFormTestBase {
     ];
     foreach ($fields as $field => $default_value) {
       $this->assertFieldById($field, $default_value);
+    }
+  }
+
+  /**
+   * Tests \Drupal\purge_purger_http\Form\HttpPurgerFormBase::buildFormTokensHelp().
+   */
+  public function testTokensHelp() {
+    $this->drupalLogin($this->admin_user);
+    $this->drupalGet($this->route);
+    $this->assertText('Tokens');
+    foreach ($this->tokenGroups as $token_group) {
+      $this->assertRaw('<code>[' . $token_group . ':');
     }
   }
 

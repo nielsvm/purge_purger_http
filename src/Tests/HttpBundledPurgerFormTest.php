@@ -23,4 +23,20 @@ class HttpBundledPurgerFormTest extends HttpPurgerFormTestBase {
    */
   protected $formClass = 'Drupal\purge_purger_http\Form\HttpBundledPurgerForm';
 
+  /**
+   * The plugin ID for which the form tested is rendered for.
+   *
+   * @var string
+   */
+  protected $plugin = 'httpbundled';
+
+  /**
+   * The token group names the form is supposed to display.
+   *
+   * @see purge_tokens_token_info()
+   *
+   * @var string[]
+   */
+  protected $tokenGroups = ['invalidations'];
+
 }
