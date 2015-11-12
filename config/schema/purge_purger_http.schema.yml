@@ -2,6 +2,10 @@ purge_purger_http.settings.*:
   type: config_entity
   label: 'HTTP Purger'
   mapping:
+
+    #
+    # Instance metadata:
+    #
     id:
       type: string
       translatable: false
@@ -11,6 +15,10 @@ purge_purger_http.settings.*:
     invalidationtype:
       type: string
       translatable: false
+
+    #
+    # Primary request information:
+    #
     hostname:
       type: string
       translatable: false
@@ -29,6 +37,29 @@ purge_purger_http.settings.*:
     verify:
       type: string
       translatable: false
+
+    #
+    # Request headers (outbound):
+    #
+    headers:
+      type: sequence
+      translatable: false
+      sequence:
+        type: purge_purger_http_header
+
+    #
+    # Body (request payload):
+    #
+    body:
+      type: text
+      translatable: false
+    body_content_type:
+      type: string
+      translatable: false
+
+    #
+    # Performance settings:
+    #
     timeout:
       type: float
       translatable: false
@@ -41,8 +72,3 @@ purge_purger_http.settings.*:
     max_requests:
       type: integer
       translatable: false
-    headers:
-      type: sequence
-      translatable: false
-      sequence:
-        type: purge_purger_http_header

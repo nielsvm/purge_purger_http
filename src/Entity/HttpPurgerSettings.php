@@ -22,6 +22,10 @@ use Drupal\purge\Plugin\Purge\Purger\PurgerSettingsInterface;
  */
 class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInterface {
 
+  //
+  // Instance metadata:
+  //
+
   /**
    * The readable name of this purger.
    *
@@ -35,6 +39,10 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    * @var string
    */
   public $invalidationtype = 'tag';
+
+  //
+  // Primary request information:
+  //
 
   /**
    * The host or IP-address to connect to.
@@ -74,11 +82,15 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
   /**
    * Whether to verify SSL certificates or not.
    *
-   * @see http://docs.guzzlephp.org/en/latest/request-options.html#verify
+   * @see http://docs.guzzlephp.org/en/latest/request-options.html//verify
    *
    * @var string
    */
   public $verify = TRUE;
+
+  //
+  // Request headers (outbound):
+  //
 
   /**
    * Configured outgoing HTTP headers.
@@ -86,6 +98,28 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    * @var array[]
    */
   public $headers = [];
+
+  //
+  // Body (request payload):
+  //
+
+  /**
+   * The body payload to send.
+   *
+   * @var string
+   */
+  public $body = '';
+
+  /**
+   * The content-type of the body payload being sent.
+   *
+   * @var string
+   */
+  public $body_content_type = 'text/plain';
+
+  //
+  // Performance settings:
+  //
 
   /**
    * The timeout of the request in seconds.

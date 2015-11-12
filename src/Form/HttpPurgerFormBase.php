@@ -90,6 +90,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
     $this->buildFormMetadata($form, $form_state, $settings);
     $this->buildFormRequest($form, $form_state, $settings);
     $this->buildFormHeaders($form, $form_state, $settings);
+    $this->buildFormBody($form, $form_state, $settings);
     $this->buildFormPerformance($form, $form_state, $settings);
     $this->buildFormTokensHelp($form, $form_state, $settings);
     return parent::buildForm($form, $form_state);
@@ -242,6 +243,48 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
   }
 
   /**
+   * Build the 'body' section of the form.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param \Drupal\purge_purger_http\Entity\HttpPurgerSettings $settings
+   *   Configuration entity for the purger being configured.
+   */
+  public function buildFormBody(array &$form, FormStateInterface $form_state, HttpPurgerSettings $settings) {
+    $form['bodytab'] = [
+      '#type' => 'details',
+      '#group' => 'tabs',
+      '#title' => $this->t('Body'),
+      '#description' => $this->t('You can send a HTTP body, when left unchecked, nothing will be sent.')
+    ];
+    $form['bodytab']['show_body_form'] = [
+      '#title' => $this->t('Send body payload'),
+      '#type' => 'checkbox',
+      '#default_value' => !($settings->body === ''),
+    ];
+    $form['bodytab']['body_form_wrapper'] = [
+      '#type' => 'fieldgroup',
+      '#states' => [
+        'visible' => [
+          ':input[name="show_body_form"]' => ['checked' => TRUE]
+        ]
+      ]
+    ];
+    $form['bodytab']['body_form_wrapper']['body_content_type'] = [
+      '#title' => $this->t('Content-Type'),
+      '#type' => 'textfield',
+      '#default_value' => $settings->body_content_type,
+    ];
+    $form['bodytab']['body_form_wrapper']['body'] = [
+      '#title' => $this->t('Body payload'),
+      '#type' => 'textarea',
+      '#default_value' => $settings->body,
+    ];
+  }
+
+  /**
    * Build the 'headers' section of the form: retrieves updated elements.
    *
    * @param array $form
@@ -348,7 +391,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
         '#type' => 'details',
         '#group' => 'tabs',
         '#title' => $this->t('Tokens'),
-        '#description' => $this->t('<p>Tokens are replaced for the <em>Path</em>-field and each header <em>Value</em>.</p>'),
+        '#description' => $this->t('<p>Tokens are replaced for the <b>Path</b>, <b>Body payload</b> and header <b>Value</b> fields.</p>'),
       ];
       $form['tokens']['table'] = [
         '#type' => 'table',
@@ -403,25 +446,35 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
    */
   public function submitFormSuccess(array &$form, FormStateInterface $form_state) {
     $settings = HttpPurgerSettings::load($this->getId($form_state));
+
+    // Empty 'body' when 'show_body_form' isn't checked.
+    if ($form_state->getValue('show_body_form') === 0) {
+      $form_state->setValue('body', '');
+    }
+
+    // Rewrite 'headers' so that it contains the exact right format for CMI.
+    if (!is_null($submitted_headers = $form_state->getValue('headers'))) {
+      $headers = [];
+      foreach ($submitted_headers as $header) {
+        if (strlen($header['field'] && strlen($header['value']))) {
+          $headers[] = $header;
+        }
+      }
+      $form_state->setValue('headers', $headers);
+    }
+
+    // Rewrite 'scheme' and 'request_method' to have the right CMI values.
+    if (!is_null($scheme = $form_state->getValue('scheme'))) {
+      $form_state->setValue('scheme', $this->schemes[$scheme]);
+    }
+    if (!is_null($method = $form_state->getValue('request_method'))) {
+      $form_state->setValue('request_method', $this->request_methods[$method]);
+    }
+
+    // Iterate the config object and overwrite values found in the form state.
     foreach ($settings as $key => $default_value) {
       if (!is_null($value = $form_state->getValue($key))) {
-        if ($key === 'request_method') {
-          $settings->$key = $this->request_methods[$value];
-        }
-        elseif ($key === 'scheme') {
-          $settings->$key = $this->schemes[$value];
-        }
-        elseif ($key === 'headers') {
-          $settings->headers = [];
-          foreach ($value as $header) {
-            if (strlen($header['field'] && strlen($header['value']))) {
-              $settings->headers[] = $header;
-            }
-          }
-        }
-        else {
-          $settings->$key = $value;
-        }
+        $settings->$key = $value;
       }
     }
     $settings->save();
