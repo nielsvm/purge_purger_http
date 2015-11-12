@@ -12,5 +12,4 @@ configuration options that older versions of Purge provided.
 * The ability to create one or more 'success conditions' + AND/OR selection. The
   API core provides certainly looks promising for this.
 * The ability to add/define POST fields.
-* Tokenization support.
 * Robust testing coverage.
