@@ -17,7 +17,7 @@ use Drupal\purge_purger_http\Plugin\Purge\Purger\HttpPurgerBase;
  * @PurgePurger(
  *   id = "httpbundled",
  *   label = @Translation("HTTP Bundled Purger"),
- *   configform = "\Drupal\purge_purger_http\Form\ConfigurationForm",
+ *   configform = "\Drupal\purge_purger_http\Form\HttpBundledPurgerForm",
  *   cooldown_time = 0.0,
  *   description = @Translation("Configurable purger that sends a single HTTP request for a set of invalidation instructions."),
  *   multi_instance = TRUE,

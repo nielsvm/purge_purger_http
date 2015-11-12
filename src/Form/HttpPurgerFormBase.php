@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\purge_purger_http\Form\ConfigurationForm.
+ * Contains \Drupal\purge_purger_http\Form\HttpPurgerFormBase.
  */
 
 namespace Drupal\purge_purger_http\Form;
@@ -15,9 +15,9 @@ use Drupal\purge_ui\Form\PurgerConfigFormBase;
 use Drupal\purge_purger_http\Entity\HttpPurgerSettings;
 
 /**
- * Configuration form for the HTTP Purger.
+ * Abstract form base for HTTP based configurable purgers.
  */
-class ConfigurationForm extends PurgerConfigFormBase {
+abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
 
   /**
    * The service that generates invalidation objects on-demand.
