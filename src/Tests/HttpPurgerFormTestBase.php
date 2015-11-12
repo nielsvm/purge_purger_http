@@ -41,9 +41,10 @@ abstract class HttpPurgerFormTestBase extends PurgerConfigFormTestBase {
       'edit-show-body-form' => '1',
       'edit-body-content-type' => 'text/plain',
       'edit-body' => '',
-      'edit-timeout' => 0.5,
-      'edit-connect-timeout' => 0.2,
+      'edit-timeout' => 1.0,
+      'edit-connect-timeout' => 1.0,
       'edit-cooldown-time' => 0.0,
+      'edit-http-errors' => '1',
       'edit-max-requests' => 100,
     ];
     foreach ($fields as $field => $default_value) {
@@ -140,6 +141,7 @@ abstract class HttpPurgerFormTestBase extends PurgerConfigFormTestBase {
       'connect_timeout' => 0.5,
       'cooldown_time' => 0.8,
       'max_requests' => 25,
+      'http_errors' => 1,
     ];
     $this->drupalPostForm($this->route, $edit, t('Save configuration'));
     $this->drupalGet($this->route);

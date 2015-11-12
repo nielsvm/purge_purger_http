@@ -93,6 +93,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
     $this->buildFormBody($form, $form_state, $settings);
     $this->buildFormPerformance($form, $form_state, $settings);
     $this->buildFormTokensHelp($form, $form_state, $settings);
+    $this->buildFormSuccessResolution($form, $form_state, $settings);
     return parent::buildForm($form, $form_state);
   }
 
@@ -422,6 +423,29 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
         }
       }
     }
+  }
+
+  /**
+   * Build the 'success resolution' section of the form.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param \Drupal\purge_purger_http\Entity\HttpPurgerSettings $settings
+   *   Configuration entity for the purger being configured.
+   */
+  public function buildFormSuccessResolution(array &$form, FormStateInterface $form_state, HttpPurgerSettings $settings) {
+    $form['sr'] = [
+      '#type' => 'details',
+      '#group' => 'tabs',
+      '#title' => $this->t('Success resolution'),
+    ];
+    $form['sr']['http_errors'] = [
+      '#title' => $this->t('Treat 4XX and 5XX responses as a failed invalidation.'),
+      '#type' => 'checkbox',
+      '#default_value' => $settings->http_errors,
+    ];
   }
 
   /**

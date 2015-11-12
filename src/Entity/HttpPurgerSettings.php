@@ -82,9 +82,9 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
   /**
    * Whether to verify SSL certificates or not.
    *
-   * @see http://docs.guzzlephp.org/en/latest/request-options.html//verify
+   * @see http://docs.guzzlephp.org/en/latest/request-options.html#verify
    *
-   * @var string
+   * @var bool
    */
   public $verify = TRUE;
 
@@ -126,14 +126,14 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    *
    * @var float
    */
-  public $timeout = 0.5;
+  public $timeout = 1.0;
 
   /**
    * The number of seconds to wait while trying to connect to a server.
    *
    * @var float
    */
-  public $connect_timeout = 0.2;
+  public $connect_timeout = 1.0;
 
   /**
    * Number of seconds to wait after one or more invalidations took place (so
@@ -151,5 +151,18 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    * @var int
    */
   public $max_requests = 100;
+
+  //
+  // Success resolution:
+  //
+
+  /**
+   * Whether 4xx and 5xx responses need to be treated as failures or not.
+   *
+   * @see http://docs.guzzlephp.org/en/latest/request-options.html#http-errors
+   *
+   * @var bool
+   */
+  public $http_errors = TRUE;
 
 }

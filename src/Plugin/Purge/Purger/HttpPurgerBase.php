@@ -193,6 +193,7 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
    */
   protected function getOptions($token_data) {
     $opt = [
+      'http_errors' => $this->settings->http_errors,
       'connect_timeout' => $this->settings->connect_timeout,
       'timeout' => $this->settings->timeout,
       'headers' => $this->getHeaders($token_data),

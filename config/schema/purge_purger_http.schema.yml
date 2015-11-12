@@ -72,3 +72,10 @@ purge_purger_http.settings.*:
     max_requests:
       type: integer
       translatable: false
+
+    #
+    # Success resolution:
+    #
+    http_errors:
+      type: boolean
+      translatable: false
