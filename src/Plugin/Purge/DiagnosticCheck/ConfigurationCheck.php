@@ -45,7 +45,6 @@ class ConfigurationCheck extends DiagnosticCheckBase implements DiagnosticCheckI
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, PurgersServiceInterface $purge_purgers) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    // $this->configFactory = $config_factory;
     $this->purgePurgers = $purge_purgers;
   }
 
