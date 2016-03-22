@@ -211,6 +211,12 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
    * {@inheritdoc}
    */
   public function getTimeHint() {
+
+    // When runtime measurement is enabled, we just use the base implementation.
+    if ($this->settings->runtime_measurement) {
+      return parent::getTimeHint();
+    }
+
     // Theoretically connection timeouts and general timeouts can add up, so
     // we add up our assumption of the worst possible time it takes as well.
     return $this->settings->connect_timeout + $this->settings->timeout;

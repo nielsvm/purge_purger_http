@@ -122,6 +122,14 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
   //
 
   /**
+   * When FALSE, dynamic capacity calculation will be disabled and based upon
+   * the connect_timeout and timeout settings.
+   *
+   * @var bool
+   */
+  public $runtime_measurement = TRUE;
+
+  /**
    * The timeout of the request in seconds.
    *
    * @var float

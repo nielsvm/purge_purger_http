@@ -328,26 +328,6 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#group' => 'tabs',
       '#title' => $this->t('Performance'),
     ];
-    $form['performance']['timeout'] = [
-      '#type' => 'number',
-      '#step' => 0.1,
-      '#min' => 0.1,
-      '#max' => 8.0,
-      '#title' => $this->t('Timeout'),
-      '#default_value' => $settings->timeout,
-      '#required' => TRUE,
-      '#description' => $this->t('The timeout of the request in seconds.')
-    ];
-    $form['performance']['connect_timeout'] = [
-      '#type' => 'number',
-      '#step' => 0.1,
-      '#min' => 0.1,
-      '#max' => 4.0,
-      '#title' => $this->t('Connection timeout'),
-      '#default_value' => $settings->connect_timeout,
-      '#required' => TRUE,
-      '#description' => $this->t('The number of seconds to wait while trying to connect to a server.')
-    ];
     $form['performance']['cooldown_time'] = [
       '#type' => 'number',
       '#step' => 0.1,
@@ -367,6 +347,50 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#default_value' => $settings->max_requests,
       '#required' => TRUE,
       '#description' => $this->t("Maximum number of HTTP requests that can be made during Drupal's execution lifetime. Usually PHP resource restraints lower this value dynamically, but can be met at the CLI.")
+    ];
+    $form['performance']['runtime_measurement'] = [
+      '#title' => $this->t('Runtime measurement'),
+      '#type' => 'checkbox',
+      '#default_value' => $settings->runtime_measurement,
+    ];
+    $form['performance']['runtime_measurement_help'] = [
+      '#type' => 'item',
+      '#states' => [
+        'visible' => [
+          ':input[name="runtime_measurement"]' => ['checked' => FALSE]
+        ]
+      ],
+      '#description' => $this->t('When you uncheck this setting, capacity will be based on the sum of both timeouts. By default, capacity will automatically adjust (up and down) based on measured time data.')
+    ];
+    $form['performance']['timeout'] = [
+      '#type' => 'number',
+      '#step' => 0.1,
+      '#min' => 0.1,
+      '#max' => 8.0,
+      '#title' => $this->t('Timeout'),
+      '#default_value' => $settings->timeout,
+      '#required' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="runtime_measurement"]' => ['checked' => FALSE]
+        ]
+      ],
+      '#description' => $this->t('The timeout of the request in seconds.')
+    ];
+    $form['performance']['connect_timeout'] = [
+      '#type' => 'number',
+      '#step' => 0.1,
+      '#min' => 0.1,
+      '#max' => 4.0,
+      '#title' => $this->t('Connection timeout'),
+      '#default_value' => $settings->connect_timeout,
+      '#required' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="runtime_measurement"]' => ['checked' => FALSE]
+        ]
+      ],
+      '#description' => $this->t('The number of seconds to wait while trying to connect to a server.')
     ];
   }
 
