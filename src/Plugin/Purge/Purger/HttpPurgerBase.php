@@ -241,4 +241,11 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function hasRuntimeMeasurement() {
+    return (bool) $this->settings->runtime_measurement;
+  }
+
 }
