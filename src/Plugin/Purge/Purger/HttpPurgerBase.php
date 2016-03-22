@@ -7,7 +7,6 @@
 
 namespace Drupal\purge_purger_http\Plugin\Purge\Purger;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Utility\Token;
