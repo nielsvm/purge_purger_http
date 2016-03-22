@@ -240,9 +240,10 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
    */
   protected function getUri($token_data) {
     return sprintf(
-      '%s://%s%s',
+      '%s://%s:%s%s',
       $this->settings->scheme,
       $this->settings->hostname,
+      $this->settings->port,
       $this->token->replace($this->settings->path, $token_data)
     );
   }
