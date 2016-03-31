@@ -81,53 +81,6 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
   }
 
   /**
-   * Turn a PHP variable into a string with data type information for debugging.
-   *
-   * @param mixed $symbols
-   *   Arbitrary PHP variable, preferably a associative array.
-   *
-   * @return string
-   *   A one-line comma separated string with data types as var_dump() generates.
-   */
-  function exportDebuggingSymbols($symbols) {
-
-    // Capture a string using PHPs very own var_dump() using output buffering.
-    ob_start();
-    var_dump($symbols);
-    $symbols = ob_get_clean();
-
-    // Clean up and reduce the output footprint for both normal and xdebug output.
-    if (extension_loaded('xdebug')) {
-      $symbols = trim(html_entity_decode(strip_tags($symbols)));
-      $symbols = substr($symbols, strpos($symbols, "\n") + 1);
-      $symbols = str_replace("  '", '', $symbols);
-      $symbols = str_replace("' =>", ':', $symbols);
-      $symbols = implode(', ', explode("\n", $symbols));
-    }
-    else {
-      $symbols = strip_tags($symbols);
-      $symbols = substr($symbols, strpos($symbols, "\n") + 1);
-      $symbols = str_replace('  ["', '', $symbols);
-      $symbols = str_replace("\"]=>\n ", ':', $symbols);
-      $symbols = rtrim($symbols, "}\n");
-      $symbols = implode(', ', explode("\n", $symbols));
-    }
-
-    // To reduce bandwidth and storage needs we shorten data type indicators.
-    $symbols = str_replace(' string', 'S', $symbols);
-    $symbols = str_replace(' int', 'I', $symbols);
-    $symbols = str_replace(' float', 'F', $symbols);
-    $symbols = str_replace(' boolean', 'B', $symbols);
-    $symbols = str_replace(' bool', 'B', $symbols);
-    $symbols = str_replace(' null', 'NLL', $symbols);
-    $symbols = str_replace(' NULL', 'NLL', $symbols);
-    $symbols = str_replace('length=', 'l=', $symbols);
-
-    // Return the resulting string.
-    return $symbols;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function getCooldownTime() {

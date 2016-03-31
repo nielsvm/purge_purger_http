@@ -39,7 +39,6 @@ class HttpBundledPurger extends HttpPurgerBase implements PurgerInterface {
     };
 
     // Build up a single HTTP request, execute it and log errors.
-    $logger = \Drupal::logger('purge_purger_http');
     $token_data = ['invalidations' => $invalidations];
     $uri = $this->getUri($token_data);
     $opt = $this->getOptions($token_data);
@@ -50,20 +49,16 @@ class HttpBundledPurger extends HttpPurgerBase implements PurgerInterface {
     }
     catch (\Exception $e) {
       $set_state(InvalidationInterface::FAILED);
+
+      // Log as much useful information as we can.
       $headers = $opt['headers'];
       unset($opt['headers']);
-      $logger->emergency(
-        "%exception thrown by %id, invalidation marked as failed. URI: %uri# METHOD: %request_method# HEADERS: %headers#mOPT: %opt#MSG: %exceptionmsg#",
-        [
-          '%exception' => get_class($e),
-          '%exceptionmsg' => $e->getMessage(),
-          '%request_method' => $this->settings->request_method,
-          '%opt' => $this->exportDebuggingSymbols($opt),
-          '%headers' => $this->exportDebuggingSymbols($headers),
-          '%uri' => $uri,
-          '%id' => $this->getid()
-        ]
-      );
+      $debug = json_encode(str_replace("\n", ' ', [
+        'msg' => $e->getMessage(),
+        'uri' => $uri, 'method' => $this->settings->request_method,
+        'guzzle_opt' => $opt, 'headers' => $headers]));
+      $this->logger()->emergency("item failed due @e, details (JSON): @debug",
+        ['@e' => get_class($e), '@debug' => $debug]);
     }
   }
 

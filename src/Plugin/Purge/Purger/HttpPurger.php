@@ -30,7 +30,6 @@ class HttpPurger extends HttpPurgerBase implements PurgerInterface {
    * {@inheritdoc}
    */
   public function invalidate(array $invalidations) {
-    $logger = \Drupal::logger('purge_purger_http');
 
     // Iterate every single object and fire a request per object.
     foreach ($invalidations as $invalidation) {
@@ -44,20 +43,16 @@ class HttpPurger extends HttpPurgerBase implements PurgerInterface {
       }
       catch (\Exception $e) {
         $invalidation->setState(InvalidationInterface::FAILED);
+
+        // Log as much useful information as we can.
         $headers = $opt['headers'];
         unset($opt['headers']);
-        $logger->emergency(
-          "%exception thrown by %id, invalidation marked as failed. URI: %uri# METHOD: %request_method# HEADERS: %headers#mOPT: %opt#MSG: %exceptionmsg#",
-          [
-            '%exception' => get_class($e),
-            '%exceptionmsg' => $e->getMessage(),
-            '%request_method' => $this->settings->request_method,
-            '%opt' => $this->exportDebuggingSymbols($opt),
-            '%headers' => $this->exportDebuggingSymbols($headers),
-            '%uri' => $uri,
-            '%id' => $this->getid()
-          ]
-        );
+        $debug = json_encode(str_replace("\n", ' ', [
+          'msg' => $e->getMessage(),
+          'uri' => $uri, 'method' => $this->settings->request_method,
+          'guzzle_opt' => $opt, 'headers' => $headers]));
+        $this->logger()->emergency("item failed due @e, details (JSON): @debug",
+          ['@e' => get_class($e), '@debug' => $debug]);
       }
     }
   }
