@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\purge_purger_http\Form\HttpPurgerFormBase.
- */
-
 namespace Drupal\purge_purger_http\Form;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;

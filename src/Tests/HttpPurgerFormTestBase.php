@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\purge_purger_http\Tests\HttpPurgerFormTestBase.
- */
-
 namespace Drupal\purge_purger_http\Tests;
 
 use Drupal\purge_ui\Tests\PurgerConfigFormTestBase;
