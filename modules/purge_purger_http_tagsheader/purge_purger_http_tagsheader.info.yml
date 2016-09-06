@@ -2,7 +2,6 @@ name: Generic HTTP Tags Header
 type: module
 description: 'Exports the Purge-Cache-Tags response header to support tag-based invalidation. You only need this for custom setups under your own control.'
 package: "Purge - reverse proxies & CDNs"
-version: VERSION
 core: 8.x
 dependencies:
   - purge
