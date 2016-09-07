@@ -28,9 +28,9 @@ class HttpPurgerFormTest extends HttpPurgerFormTestBase {
   /**
    * The token group names the form is supposed to display.
    *
-   * @see purge_tokens_token_info()
-   *
    * @var string[]
+   *
+   * @see purge_tokens_token_info()
    */
   protected $tokenGroups = ['invalidation'];
 

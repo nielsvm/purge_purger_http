@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\purge\Plugin\Purge\Purger\PurgerBase;
 use Drupal\purge\Plugin\Purge\Purger\PurgerInterface;
-use Drupal\purge\Plugin\Purge\Invalidation\InvalidationInterface;
 use Drupal\purge_purger_http\Entity\HttpPurgerSettings;
 
 /**
@@ -16,6 +15,8 @@ use Drupal\purge_purger_http\Entity\HttpPurgerSettings;
 abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
 
   /**
+   * The Guzzle HTTP client.
+   *
    * @var \GuzzleHttp\Client
    */
   protected $client;
@@ -30,7 +31,7 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
   /**
    * The token service.
    *
-   * @var \Drupal\Core\Utility\Token.
+   * @var \Drupal\Core\Utility\Token
    */
   protected $token;
 
@@ -133,7 +134,6 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
    *
    * @param array $token_data
    *   An array of keyed objects, to pass on to the token service.
-   *
    *
    * @return mixed[]
    *   Associative array with option/value pairs.
