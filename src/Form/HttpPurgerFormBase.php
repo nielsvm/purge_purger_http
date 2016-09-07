@@ -112,7 +112,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
     ];
     $types = [];
     foreach ($this->purgeInvalidationFactory->getPlugins() as $type => $definition) {
-      $types[$type] = (string)$definition['label'];
+      $types[$type] = (string) $definition['label'];
     }
     $form['invalidationtype'] = [
       '#type' => 'select',
@@ -139,7 +139,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#type' => 'details',
       '#group' => 'tabs',
       '#title' => $this->t('Request'),
-      '#description' => $this->t('In this section you configure how a single HTTP request looks like.')
+      '#description' => $this->t('In this section you configure how a single HTTP request looks like.'),
     ];
     $form['request']['hostname'] = [
       '#title' => $this->t('Hostname'),
@@ -175,9 +175,9 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#default_value' => $settings->verify,
       '#states' => [
         'visible' => [
-          ':input[name="scheme"]' => ['value' => array_search('https', $this->schemes)]
-        ]
-      ]
+          ':input[name="scheme"]' => ['value' => array_search('https', $this->schemes)],
+        ],
+      ],
     ];
   }
 
@@ -264,9 +264,9 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#type' => 'fieldgroup',
       '#states' => [
         'visible' => [
-          ':input[name="show_body_form"]' => ['checked' => TRUE]
-        ]
-      ]
+          ':input[name="show_body_form"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
     $form['bodytab']['body_form_wrapper']['body_content_type'] = [
       '#title' => $this->t('Content-Type'),
@@ -352,8 +352,8 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#type' => 'item',
       '#states' => [
         'visible' => [
-          ':input[name="runtime_measurement"]' => ['checked' => FALSE]
-        ]
+          ':input[name="runtime_measurement"]' => ['checked' => FALSE],
+        ],
       ],
       '#description' => $this->t('When you uncheck this setting, capacity will be based on the sum of both timeouts. By default, capacity will automatically adjust (up and down) based on measured time data.')
     ];
@@ -367,8 +367,8 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#required' => TRUE,
       '#states' => [
         'visible' => [
-          ':input[name="runtime_measurement"]' => ['checked' => FALSE]
-        ]
+          ':input[name="runtime_measurement"]' => ['checked' => FALSE],
+        ],
       ],
       '#description' => $this->t('The timeout of the request in seconds.')
     ];
@@ -382,8 +382,8 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#required' => TRUE,
       '#states' => [
         'visible' => [
-          ':input[name="runtime_measurement"]' => ['checked' => FALSE]
-        ]
+          ':input[name="runtime_measurement"]' => ['checked' => FALSE],
+        ],
       ],
       '#description' => $this->t('The number of seconds to wait while trying to connect to a server.')
     ];
@@ -419,11 +419,11 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
         '#header' => [
           'token' => [
             'data' => $this->t('Token'),
-            'class' => [RESPONSIVE_PRIORITY_MEDIUM]
+            'class' => [RESPONSIVE_PRIORITY_MEDIUM],
           ],
           'description' => [
             'data' => $this->t('Description'),
-            'class' => [RESPONSIVE_PRIORITY_LOW]
+            'class' => [RESPONSIVE_PRIORITY_LOW],
           ],
         ],
       ];
@@ -437,7 +437,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
             ),
           ];
           $form['tokens']['table'][$token]['description'] = [
-            '#markup' => $info['description']
+            '#markup' => $info['description'],
           ];
         }
       }

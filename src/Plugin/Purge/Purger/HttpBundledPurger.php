@@ -27,7 +27,7 @@ class HttpBundledPurger extends HttpPurgerBase implements PurgerInterface {
   public function invalidate(array $invalidations) {
 
     // Create a simple closure to mass-update states on the objects.
-    $set_state = function($state) use($invalidations) {
+    $set_state = function ($state) use ($invalidations) {
       foreach ($invalidations as $invalidation) {
         $invalidation->setState($state);
       }

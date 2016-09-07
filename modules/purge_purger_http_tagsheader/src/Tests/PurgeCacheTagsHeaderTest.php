@@ -21,7 +21,7 @@ class PurgeCacheTagsHeaderTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  function setUp() {
+  public function setUp() {
     parent::setUp();
     $this->installSchema('system', ['router']);
     \Drupal::service('router.builder')->rebuild();

@@ -48,7 +48,7 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
    */
-  function __construct(array $configuration, $plugin_id, $plugin_definition, ClientInterface $http_client, Token $token) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ClientInterface $http_client, Token $token) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->settings = HttpPurgerSettings::load($this->getId());
     $this->client = $http_client;
