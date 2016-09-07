@@ -49,10 +49,13 @@ class HttpBundledPurger extends HttpPurgerBase implements PurgerInterface {
       $headers = $opt['headers'];
       unset($opt['headers']);
       $debug = json_encode(
-        str_replace("\n", ' ', [
-          'msg' => $e->getMessage(),
-          'uri' => $uri, 'method' => $this->settings->request_method,
-          'guzzle_opt' => $opt, 'headers' => $headers,
+        str_replace("\n", ' ',
+          [
+            'msg' => $e->getMessage(),
+            'uri' => $uri,
+            'method' => $this->settings->request_method,
+            'guzzle_opt' => $opt,
+            'headers' => $headers,
           ]
         )
       );
