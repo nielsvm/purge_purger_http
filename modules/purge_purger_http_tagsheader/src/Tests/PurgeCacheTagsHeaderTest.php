@@ -3,7 +3,6 @@
 namespace Drupal\purge_purger_http_tagsheader\Tests;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Drupal\purge\Tests\KernelTestBase;
 
 /**
@@ -12,10 +11,6 @@ use Drupal\purge\Tests\KernelTestBase;
  * @group purge_purger_http_tagsheader
  */
 class PurgeCacheTagsHeaderTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
   public static $modules = ['system', 'purge_purger_http_tagsheader'];
 
   /**

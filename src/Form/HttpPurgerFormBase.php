@@ -24,13 +24,24 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
   /**
    * Static listing of all possible requests methods.
    *
+   * @var array
+   *
    * @todo
    *   Confirm if all relevant HTTP methods are covered.
    *   http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
-   *
-   * @var array
    */
-  protected $request_methods = ['BAN', 'GET', 'POST', 'HEAD', 'PUT', 'OPTIONS', 'PURGE', 'DELETE', 'TRACE', 'CONNECT'];
+  protected $requestMethods = [
+    'BAN',
+    'GET',
+    'POST',
+    'HEAD',
+    'PUT',
+    'OPTIONS',
+    'PURGE',
+    'DELETE',
+    'TRACE',
+    'CONNECT',
+  ];
 
   /**
    * Static listing of the possible connection schemes.
@@ -81,7 +92,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $settings = HttpPurgerSettings::load($this->getId($form_state));
-    $form['tabs'] = ['#type' => 'vertical_tabs', '#weight' => 10,];
+    $form['tabs'] = ['#type' => 'vertical_tabs', '#weight' => 10];
     $this->buildFormMetadata($form, $form_state, $settings);
     $this->buildFormRequest($form, $form_state, $settings);
     $this->buildFormHeaders($form, $form_state, $settings);
@@ -159,8 +170,8 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
     $form['request']['request_method'] = [
       '#title' => $this->t('Request Method'),
       '#type' => 'select',
-      '#default_value' => array_search($settings->request_method, $this->request_methods),
-      '#options' => $this->request_methods,
+      '#default_value' => array_search($settings->request_method, $this->requestMethods),
+      '#options' => $this->requestMethods,
     ];
     $form['request']['scheme'] = [
       '#title' => $this->t('Scheme'),
@@ -200,14 +211,14 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#type' => 'details',
       '#group' => 'tabs',
       '#title' => $this->t('Headers'),
-      '#description' => $this->t('Configure the outbound HTTP headers, leave empty to delete.')
+      '#description' => $this->t('Configure the outbound HTTP headers, leave empty to delete.'),
     ];
     $form['headers']['headers'] = [
       '#tree' => TRUE,
       '#type' => 'table',
       '#header' => [$this->t('Header'), $this->t('Value')],
       '#prefix' => '<div id="headers-wrapper">',
-      '#suffix' => '</div>'
+      '#suffix' => '</div>',
     ];
     for ($i = 0; $i < $form_state->get('headers_items_count'); $i++) {
       if (!isset($form['headers']['headers'][$i])) {
@@ -253,7 +264,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#type' => 'details',
       '#group' => 'tabs',
       '#title' => $this->t('Body'),
-      '#description' => $this->t('You can send a HTTP body, when left unchecked, nothing will be sent.')
+      '#description' => $this->t('You can send a HTTP body, when left unchecked, nothing will be sent.'),
     ];
     $form['bodytab']['show_body_form'] = [
       '#title' => $this->t('Send body payload'),
@@ -331,7 +342,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#title' => $this->t('Cooldown time'),
       '#default_value' => $settings->cooldown_time,
       '#required' => TRUE,
-      '#description' => $this->t('Number of seconds to wait after a group of HTTP requests (so that other purgers get fresh content)')
+      '#description' => $this->t('Number of seconds to wait after a group of HTTP requests (so that other purgers get fresh content)'),
     ];
     $form['performance']['max_requests'] = [
       '#type' => 'number',
@@ -341,7 +352,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       '#title' => $this->t('Maximum requests'),
       '#default_value' => $settings->max_requests,
       '#required' => TRUE,
-      '#description' => $this->t("Maximum number of HTTP requests that can be made during Drupal's execution lifetime. Usually PHP resource restraints lower this value dynamically, but can be met at the CLI.")
+      '#description' => $this->t("Maximum number of HTTP requests that can be made during Drupal's execution lifetime. Usually PHP resource restraints lower this value dynamically, but can be met at the CLI."),
     ];
     $form['performance']['runtime_measurement'] = [
       '#title' => $this->t('Runtime measurement'),
@@ -355,7 +366,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
           ':input[name="runtime_measurement"]' => ['checked' => FALSE],
         ],
       ],
-      '#description' => $this->t('When you uncheck this setting, capacity will be based on the sum of both timeouts. By default, capacity will automatically adjust (up and down) based on measured time data.')
+      '#description' => $this->t('When you uncheck this setting, capacity will be based on the sum of both timeouts. By default, capacity will automatically adjust (up and down) based on measured time data.'),
     ];
     $form['performance']['timeout'] = [
       '#type' => 'number',
@@ -370,7 +381,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
           ':input[name="runtime_measurement"]' => ['checked' => FALSE],
         ],
       ],
-      '#description' => $this->t('The timeout of the request in seconds.')
+      '#description' => $this->t('The timeout of the request in seconds.'),
     ];
     $form['performance']['connect_timeout'] = [
       '#type' => 'number',
@@ -385,7 +396,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
           ':input[name="runtime_measurement"]' => ['checked' => FALSE],
         ],
       ],
-      '#description' => $this->t('The number of seconds to wait while trying to connect to a server.')
+      '#description' => $this->t('The number of seconds to wait while trying to connect to a server.'),
     ];
   }
 
@@ -406,7 +417,6 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
    */
   public function buildFormTokensHelp(array &$form, FormStateInterface $form_state, HttpPurgerSettings $settings) {
     if (function_exists('purge_tokens_token_info')) {
-      $tokens = purge_tokens_token_info()['tokens'];
       $form['tokens'] = [
         '#type' => 'details',
         '#group' => 'tabs',
@@ -427,8 +437,9 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
           ],
         ],
       ];
+      $tokens = purge_tokens_token_info()['tokens'];
       foreach ($this->tokenGroups as $token_group) {
-        foreach (purge_tokens_token_info()['tokens'][$token_group] as $token => $info) {
+        foreach ($tokens[$token_group] as $token => $info) {
           $token = sprintf('[%s:%s]', $token_group, $token);
           $form['tokens']['table'][$token]['token'] = [
             '#markup' => $this->t(
@@ -511,7 +522,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
       $form_state->setValue('scheme', $this->schemes[$scheme]);
     }
     if (!is_null($method = $form_state->getValue('request_method'))) {
-      $form_state->setValue('request_method', $this->request_methods[$method]);
+      $form_state->setValue('request_method', $this->requestMethods[$method]);
     }
 
     // Iterate the config object and overwrite values found in the form state.

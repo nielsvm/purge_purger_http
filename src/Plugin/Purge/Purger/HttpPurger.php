@@ -47,7 +47,8 @@ class HttpPurger extends HttpPurgerBase implements PurgerInterface {
           'uri' => $uri, 'method' => $this->settings->request_method,
           'guzzle_opt' => $opt, 'headers' => $headers]));
         $this->logger()->emergency("item failed due @e, details (JSON): @debug",
-          ['@e' => get_class($e), '@debug' => $debug]);
+          ['@e' => get_class($e), '@debug' => $debug]
+        );
       }
     }
   }

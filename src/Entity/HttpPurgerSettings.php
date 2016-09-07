@@ -18,9 +18,9 @@ use Drupal\purge\Plugin\Purge\Purger\PurgerSettingsInterface;
  */
 class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInterface {
 
-  //
-  // Instance metadata:
-  //
+  /**
+   * Instance metadata:
+   */
 
   /**
    * The readable name of this purger.
@@ -36,9 +36,9 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    */
   public $invalidationtype = 'tag';
 
-  //
-  // Primary request information:
-  //
+  /**
+   * Primary request information:
+   */
 
   /**
    * The host or IP-address to connect to.
@@ -84,9 +84,9 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    */
   public $verify = TRUE;
 
-  //
-  // Request headers (outbound):
-  //
+  /**
+   * Request headers (outbound):
+   */
 
   /**
    * Configured outgoing HTTP headers.
@@ -95,9 +95,9 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    */
   public $headers = [];
 
-  //
-  // Body (request payload):
-  //
+  /**
+   * Body (request payload):
+   */
 
   /**
    * The body payload to send.
@@ -113,9 +113,9 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    */
   public $body_content_type = 'text/plain';
 
-  //
-  // Performance settings:
-  //
+  /**
+   * Performance settings:
+   */
 
   /**
    * When FALSE, dynamic capacity calculation will be disabled and based upon
@@ -156,9 +156,9 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    */
   public $max_requests = 100;
 
-  //
-  // Success resolution:
-  //
+  /**
+   * Success resolution:
+   */
 
   /**
    * Whether 4xx and 5xx responses need to be treated as failures or not.
