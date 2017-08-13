@@ -28,8 +28,14 @@ class PurgeCacheTagsHeaderTest extends KernelTestBase {
   public function testHeaderValue() {
     $request = Request::create('/system/401');
     $response = $this->container->get('http_kernel')->handle($request);
+    $tags_header = $response->headers->get('Purge-Cache-Tags');
+    $tags = explode(' ', $tags_header);
     $this->assertEqual(200, $response->getStatusCode());
-    $this->assertEqual($response->headers->get('Purge-Cache-Tags'), 'config:user.role.anonymous rendered');
+    $this->assertTrue(is_string($tags_header));
+    $this->assertTrue(strlen($tags_header));
+    $this->assertTrue(in_array('config:user.role.anonymous', $tags));
+    $this->assertTrue(in_array('http_response', $tags));
+    $this->assertTrue(in_array('rendered', $tags));
   }
 
 }
