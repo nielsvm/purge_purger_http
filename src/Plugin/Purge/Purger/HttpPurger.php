@@ -2,9 +2,8 @@
 
 namespace Drupal\purge_purger_http\Plugin\Purge\Purger;
 
-use Drupal\purge\Plugin\Purge\Purger\PurgerInterface;
 use Drupal\purge\Plugin\Purge\Invalidation\InvalidationInterface;
-use Drupal\purge_purger_http\Plugin\Purge\Purger\HttpPurgerBase;
+use Drupal\purge\Plugin\Purge\Purger\PurgerInterface;
 
 /**
  * HTTP Purger.

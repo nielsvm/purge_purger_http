@@ -2,12 +2,12 @@
 
 namespace Drupal\purge_purger_http\Plugin\Purge\Purger;
 
-use GuzzleHttp\ClientInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\purge\Plugin\Purge\Purger\PurgerBase;
 use Drupal\purge\Plugin\Purge\Purger\PurgerInterface;
 use Drupal\purge_purger_http\Entity\HttpPurgerSettings;
+use GuzzleHttp\ClientInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Abstract base class for HTTP based configurable purgers.
@@ -17,7 +17,7 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
   /**
    * The Guzzle HTTP client.
    *
-   * @var \GuzzleHttp\Client
+   * @var \GuzzleHttp\ClientInterface
    */
   protected $client;
 
@@ -49,7 +49,7 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ClientInterface $http_client, Token $token) {
+  final public function __construct(array $configuration, $plugin_id, $plugin_definition, ClientInterface $http_client, Token $token) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->settings = HttpPurgerSettings::load($this->getId());
     $this->client = $http_client;
@@ -99,7 +99,7 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
    * @return string[]
    *   Associative array with header values and field names in the key.
    */
-  protected function getHeaders($token_data) {
+  protected function getHeaders(array $token_data) {
     $headers = [];
     $headers['user-agent'] = 'purge_purger_http module for Drupal 8.';
     if (strlen($this->settings->body)) {
@@ -138,7 +138,7 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
    * @return mixed[]
    *   Associative array with option/value pairs.
    */
-  protected function getOptions($token_data) {
+  protected function getOptions(array $token_data) {
     $opt = [
       'http_errors' => $this->settings->http_errors,
       'connect_timeout' => $this->settings->connect_timeout,
@@ -185,7 +185,7 @@ abstract class HttpPurgerBase extends PurgerBase implements PurgerInterface {
    * @return string
    *   URL string representation.
    */
-  protected function getUri($token_data) {
+  protected function getUri(array $token_data) {
     return sprintf(
       '%s://%s:%s%s',
       $this->settings->scheme,

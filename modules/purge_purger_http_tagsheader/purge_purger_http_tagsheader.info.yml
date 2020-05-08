@@ -1,5 +1,4 @@
-core_version_requirement: '^8 || ^9'
-core: 8.x
+core_version_requirement: '^8.8.6 || ^9.0.0'
 name: 'Generic HTTP Tags Header'
 type: module
 description: 'Exports the Purge-Cache-Tags response header to support tag-based invalidation. You only need this for custom setups under your own control.'

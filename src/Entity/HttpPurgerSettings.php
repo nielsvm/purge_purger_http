@@ -14,13 +14,30 @@ use Drupal\purge\Plugin\Purge\Purger\PurgerSettingsInterface;
  *   config_prefix = "settings",
  *   static_cache = TRUE,
  *   entity_keys = {"id" = "id"},
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "name",
+ *     "invalidationtype",
+ *     "hostname",
+ *     "port",
+ *     "path",
+ *     "request_method",
+ *     "scheme",
+ *     "verify",
+ *     "headers",
+ *     "body",
+ *     "body_content_type",
+ *     "runtime_measurement",
+ *     "timeout",
+ *     "connect_timeout",
+ *     "cooldown_time",
+ *     "max_requests",
+ *     "http_errors"
+ *   },
  * )
  */
 class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInterface {
-
-  /**
-   * Instance metadata.
-   */
 
   /**
    * The readable name of this purger.
@@ -66,7 +83,7 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    *
    * @var string
    */
-  public $request_method = 'BAN';
+  public $request_method = 'BAN'; // phpcs:ignore
 
   /**
    * The HTTP scheme.
@@ -111,7 +128,7 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    *
    * @var string
    */
-  public $body_content_type = 'text/plain';
+  public $body_content_type = 'text/plain'; // phpcs:ignore
 
   /**
    * Performance settings.
@@ -125,7 +142,7 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    *
    * @var bool
    */
-  public $runtime_measurement = TRUE;
+  public $runtime_measurement = TRUE; // phpcs:ignore
 
   /**
    * The timeout of the request in seconds.
@@ -139,7 +156,7 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    *
    * @var float
    */
-  public $connect_timeout = 1.0;
+  public $connect_timeout = 1.0; // phpcs:ignore
 
   /**
    * Cooldown time.
@@ -149,7 +166,7 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    *
    * @var float
    */
-  public $cooldown_time = 0.0;
+  public $cooldown_time = 0.0; // phpcs:ignore
 
   /**
    * Maximum requests.
@@ -160,7 +177,7 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    *
    * @var int
    */
-  public $max_requests = 100;
+  public $max_requests = 100; // phpcs:ignore
 
   /**
    * Success resolution.
@@ -173,6 +190,6 @@ class HttpPurgerSettings extends PurgerSettingsBase implements PurgerSettingsInt
    *
    * @see http://docs.guzzlephp.org/en/latest/request-options.html#http-errors
    */
-  public $http_errors = TRUE;
+  public $http_errors = TRUE; // phpcs:ignore
 
 }

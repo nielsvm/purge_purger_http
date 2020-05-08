@@ -2,12 +2,12 @@
 
 namespace Drupal\purge_purger_http\Form;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\purge\Plugin\Purge\Invalidation\InvalidationsServiceInterface;
-use Drupal\purge_ui\Form\PurgerConfigFormBase;
 use Drupal\purge_purger_http\Entity\HttpPurgerSettings;
+use Drupal\purge_ui\Form\PurgerConfigFormBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Abstract form base for HTTP based configurable purgers.
@@ -44,6 +44,40 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
   ];
 
   /**
+   * The token group names this purger supports replacing tokens for.
+   *
+   * @var string[]
+   *
+   * @see purge_tokens_token_info()
+   */
+  protected $tokenGroups = [];
+
+  /**
+   * List of fields from \Drupal\purge_purger_http\Entity\HttpPurgerSettings.
+   *
+   * @var string[]
+   */
+  protected $settingFields = [
+    "name",
+    "invalidationtype",
+    "hostname",
+    "port",
+    "path",
+    "request_method",
+    "scheme",
+    "verify",
+    "headers",
+    "body",
+    "body_content_type",
+    "runtime_measurement",
+    "timeout",
+    "connect_timeout",
+    "cooldown_time",
+    "max_requests",
+    "http_errors",
+  ];
+
+  /**
    * Static listing of the possible connection schemes.
    *
    * @var array
@@ -58,7 +92,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
    * @param \Drupal\purge\Plugin\Purge\Invalidation\InvalidationsServiceInterface $purge_invalidation_factory
    *   The invalidation objects factory service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, InvalidationsServiceInterface $purge_invalidation_factory) {
+  final public function __construct(ConfigFactoryInterface $config_factory, InvalidationsServiceInterface $purge_invalidation_factory) {
     $this->setConfigFactory($config_factory);
     $this->purgeInvalidationFactory = $purge_invalidation_factory;
   }
@@ -83,7 +117,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'purge_purger_http.configuration_form';
   }
 
@@ -239,7 +273,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
     $form['headers']['add'] = [
       '#type' => 'submit',
       '#name' => 'add',
-      '#value' => t('Add header'),
+      '#value' => $this->t('Add header'),
       '#submit' => [[$this, 'buildFormHeadersAdd']],
       '#ajax' => [
         'callback' => [$this, 'buildFormHeadersRebuild'],
@@ -484,7 +518,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
 
     // Validate that our timeouts stay between the boundaries purge demands.
-    $timeout = $form_state->getValue('connect_timeout') + $form_state->getValue('timeout');
+    $timeout = (float) ($form_state->getValue('connect_timeout') + $form_state->getValue('timeout'));
     if ($timeout > 10) {
       $form_state->setErrorByName('connect_timeout');
       $form_state->setErrorByName('timeout', $this->t('The sum of both timeouts cannot be higher than 10.00 as this would affect performance too negatively.'));
@@ -526,7 +560,7 @@ abstract class HttpPurgerFormBase extends PurgerConfigFormBase {
     }
 
     // Iterate the config object and overwrite values found in the form state.
-    foreach ($settings as $key => $default_value) {
+    foreach ($this->settingFields as $key) {
       if (!is_null($value = $form_state->getValue($key))) {
         $settings->$key = $value;
       }

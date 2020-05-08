@@ -2,6 +2,8 @@ purge_purger_http.settings.*:
   type: config_entity
   label: 'HTTP Purger'
   mapping:
+    label:
+      type: label
 
     #
     # Instance metadata:

@@ -1,5 +1,4 @@
-core_version_requirement: '^8 || ^9'
-core: 8.x
+core_version_requirement: '^8.8.6 || ^9.0.0'
 name: 'Generic HTTP Purger'
 type: module
 description: 'Generic and highly configurable purger that makes HTTP requests, best suits custom configurations.'
