@@ -8,6 +8,12 @@ and this project adheres to
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+## [8.x-1.0] - 2020-05-29
+
+### Added
 - **Improvement:** Added `CHANGELOG.md` to start tracking changes.
 - **Improvement:** Added `.gitattributes` to keep certain files out of packages.
 - **Improvement:** Added `composer.json` for integration with Composer.
